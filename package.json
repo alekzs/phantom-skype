@@ -8,20 +8,22 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ShyykoSerhiy/PhantomSkype.git"
+    "url": "https://github.com/alekzs/phantom-skype.git"
   },
   "keywords": [
     "phantom",
     "skype"
   ],
-  "author": "shyyko.serhiy@gmail.com",
+  "author": "gregorkas@gmail.com",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ShyykoSerhiy/PhantomSkype/issues"
+    "url": "https://github.com/alekzs/PhantomSkype/issues"
   },
-  "homepage": "https://github.com/ShyykoSerhiy/PhantomSkype",
+  "homepage": "https://github.com/alekzs/PhantomSkype",
   "dependencies": {
-    "socket.io": "^1.3.5",
-    "phantom-socketio": "0.0.2"
+    "body-parser": "^1.12.4",
+    "express": "^4.12.4",
+    "phantom-socketio": "0.0.2",
+    "socket.io": "^1.3.5"
   }
 }

@@ -7,22 +7,50 @@ var password = 'xxx';
 if (!username || !password){
     throw new Error('Username and password should be provided as commandline arguments!');
 }
+var getIP = require('external-ip')();
+var externalIP = null;
+var isSilent = false;
+getIP(function (err, ip) {
+	externalIP = ip;
+});
+
 var socketCache = null;
+var commands = {
+	'!love': function(data) {
+		return ['I love you,', data.message.displayNameOverride, '(heart)!'].join(' ');
+        },
+	'!igor': function() {
+		return 'Get back to work™';
+	},
+	'!info': function(data) {
+		return ['POST request to:', 'http://' + externalIP + '/deploy\n',
+			'JSON payload: {"conversationId": "' + data.conversationId + '", "conversationMessage": "bzzzz"}'].join(' ');
+	},
+	'!ping': function(data) {
+		return isSilent ? 'M MM mmm mmmmm mmmmm mmmmmmm mmm' : 'I AM the droid you\'re looking for.';
+        },
+	'!silence': function(data) {
+		isSilent = !isSilent;
+		return 'Not a word.';
+	},
+	'!kajpamajodonc': function(data){
+		return 'http://www.casanostra.si/olka/dnevna-ponudba \nhttp://www.casanostra.si/san-martino/dnevna-ponudba';
+	}
+};
 io.on('connection', function (socket) {
     console.log('a user connected');
     socketCache = socket;
     socket.on('initialized', function () {
         console.log('Everything is initialized now. We can send and receive messages.');
         socket.on('message', function (data) {
-            console.log(data);
-            //socket.emit('message', JSON.stringify({ //sending back response
-            //    conversationId: data.conversationId,
-            //    text: data.message.info.text + ':' + data.message.sender.id
-            //}));
-            if(data.message.info.text === '!love') {
+	    console.log('got message:', data.message.info);
+            if(commands[data.message.info.text]) {
+		if(isSilent && !(data.message.info.text === '!silence' || data.message.info.text === '!ping')) {
+			return;
+		}
 		socket.emit('message', JSON.stringify({
 			conversationId: data.conversationId,
-			text: 'I love you too! (heart)'
+			text: commands[data.message.info.text].call(this, data)
 		}));
 	    }
         });
@@ -45,19 +73,15 @@ var childArgs = [
 ];
 var child = childProcess.execFile('phantomjs', childArgs);
 child.stdout.on('data', function (data) {
-    console.log(data.toString());
 });
 
 
-    ///---MemoryStore
-    //var MemoryStore = express.session.MemoryStore;
-
     //---App config
-      app.use(bodyParser());
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.json());
 
 
 app.post('/deploy', function (req, res) {
-  console.log(req.body.conversationId, req.body.conversationMessage);
   if(socketCache) {
     socketCache.emit('message', JSON.stringify({ //sending back response
                 conversationId: req.body.conversationId,

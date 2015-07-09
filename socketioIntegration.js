@@ -6,7 +6,6 @@ var simpleJsPath = system.args[0];
 var indexJsDirectoryPath = simpleJsPath.substring(0, simpleJsPath.lastIndexOf(fs.separator))
     + fs.separator + 'node_modules'
     + fs.separator + 'phantom-socketio';
-
 phantomSocket.initialize(indexJsDirectoryPath, system.args[1], function () {
     phantomSocket.on('initialize', function (credentials) {
         credentials = JSON.parse(credentials);

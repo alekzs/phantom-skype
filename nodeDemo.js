@@ -2,8 +2,8 @@ var io = require('socket.io')();
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var username = 'xxx@xxx.com';
-var password = 'xxx';
+var username = 'bee7bot@outlook.com';
+var password = 'NLALDkX5ZOiw';
 if (!username || !password){
     throw new Error('Username and password should be provided as commandline arguments!');
 }
@@ -35,6 +35,9 @@ var commands = {
 	},
 	'!kajpamajodonc': function(data){
 		return 'http://www.casanostra.si/olka/dnevna-ponudba \nhttp://www.casanostra.si/san-martino/dnevna-ponudba';
+	},
+	'!soon': function(data){
+		return 'https://dl.dropboxusercontent.com/u/3732332/random/guize.png';
 	}
 };
 io.on('connection', function (socket) {
@@ -43,7 +46,7 @@ io.on('connection', function (socket) {
     socket.on('initialized', function () {
         console.log('Everything is initialized now. We can send and receive messages.');
         socket.on('message', function (data) {
-	    console.log('got message:', data.message.info);
+	    //console.log('got message:', data.message.info);
             if(commands[data.message.info.text]) {
 		if(isSilent && !(data.message.info.text === '!silence' || data.message.info.text === '!ping')) {
 			return;
@@ -58,7 +61,6 @@ io.on('connection', function (socket) {
     socket.on('disconnect', function () {
         console.log('phantom disconnected');
     });
-
     socket.emit('initialize', JSON.stringify({username: username, password: password}));
 });
 io.listen(3000);
